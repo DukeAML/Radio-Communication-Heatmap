@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Dec  9 16:25:02 2020
-
-@author: TylerFeldman
+From: https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.correlate2d.html
 """
 
 from scipy import signal
