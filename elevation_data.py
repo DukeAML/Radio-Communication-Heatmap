@@ -31,7 +31,6 @@ def get_sample_airmap_data():
 def get_airmap_data(lat, lng):
     """ Gets a grid of elevation data centered around a target point 
     
-
     Parameters
     ----------
     lat : 
