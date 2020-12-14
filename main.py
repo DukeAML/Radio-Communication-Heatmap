@@ -1,20 +1,9 @@
 import numpy as np
 from flask import Flask
-from elevation_data import *
+from elevation_data import get_airmap_data, get_sample_airmap_data
 from heatmap_generation import compute_heatmap
 
-
-'''
-What we need to do:
-
-import dted data or other elevation data
-generate heatmap - needs to be fleshed out further
-provide results to the front end
-
-'''
-
 app = Flask(__name__)
-
 
 @app.route('/')
 def index():
