@@ -12,5 +12,5 @@ def index():
 @app.route('/test')
 def test():
     stats, carpet = get_airmap_data(47.6062, 122.3321)
-    heatmap = compute_heatmap(carpet)
+    heatmap, best_loc = compute_heatmap(carpet)
     return 'done'
