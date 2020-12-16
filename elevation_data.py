@@ -60,5 +60,6 @@ def get_airmap_data(lat, lng):
 if __name__ == "__main__":
     stats, carpet = get_airmap_data(47.6062, 122.3321)
     plt.imshow(carpet)
+    plt.show()
 
 
