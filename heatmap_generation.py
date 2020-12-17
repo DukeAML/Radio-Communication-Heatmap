@@ -22,6 +22,21 @@ def compute_heatmap(elevation_grid):
 
 
 def rotate_filter(filter, degrees):
+    """ Rotates a 2D array by an angle of degrees, using bilinear interpolation
+    
+    Parameters
+    ----------
+    filter : 2D numpy array
+        Can be any shape, but must be a 2D numpy array.
+    degrees : float/double/int
+        How many degrees to rotate the array.
+
+    Returns
+    -------
+    rotated_filter : 2D array
+        2D array that is rotated relative to the input by an angle of degrees.
+        
+    """
     
     img = Image.fromarray(filter)
     rotated_img = img.rotate(degrees, resample=Image.BILINEAR)
@@ -29,9 +44,32 @@ def rotate_filter(filter, degrees):
 
     return rotated_filter
 
+
 def calculate_bearing_angle(lat1, lng1, lat2, lng2):
-    # https://www.igismap.com/formula-to-find-bearing-or-heading-angle-between-two-points-latitude-longitude/
-    # https://stackoverflow.com/questions/3932502/calculate-angle-between-two-latitude-longitude-points
+    """ Calculates the angle in degrees clockwise from north between the first
+    and second point
+    
+    https://www.igismap.com/formula-to-find-bearing-or-heading-angle-between-two-points-latitude-longitude/
+    https://stackoverflow.com/questions/3932502/calculate-angle-between-two-latitude-longitude-points
+
+    Parameters
+    ----------
+    lat1 : float/double
+        Latitude of first point, in degrees.
+    lng1 : float/double
+        Longitude of first point, in degrees.
+    lat2 : float/double
+        Latitude of second point, in degrees.
+    lng2 : float/double
+        Longitude of second point, in degrees.
+
+    Returns
+    -------
+    brng : float, angle in degrees
+        Angle in degrees between the first point and the second point measured
+        clockwise from North.
+
+    """
     
     lat1, lng1, lat2, lng2 = math.radians(lat1), math.radians(lng1), math.radians(lat2), math.radians(lng2)
     delta_lng = lng2-lng1
@@ -44,6 +82,7 @@ def calculate_bearing_angle(lat1, lng1, lat2, lng2):
     brng = math.degrees(brng)
     brng = (brng + 360) % 360
     return brng
+
 
 if __name__ == "__main__":
     
