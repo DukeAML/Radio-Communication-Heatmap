@@ -6,18 +6,46 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import math
 
+def compute_heatmap(elevation_grid, lat1, lng1, lat2, lng2, n = 5): 
+    """ Applies a U-shaped kernel (with orientation based on the positions of the soldiers and the party to communicate
+        with) to the geographical data and returns a list of the best locations (number of locations specified by 
+        the n parameter)
 
-def compute_heatmap(elevation_grid):
+    Parameters
+    ----------
+    elevation_grid : 2D array
+        Geographical data
+    lat1 : float/double
+        Latitude of the soldier's position
+    lng1 : float/double
+        Longitude of the soldier's position
+    lat2 :float/double
+        Latitude of the position with which soldiers want to communicate
+    lng2 : float/double
+        Longitude of the position with which soldiers want to communicate
+    n : int
+        Number of "best" locations to return
 
+    Returns
+    -------
+    corr : 2D array
+        Array of values representing the viability of the position to prevent radio signal jamming
+    best_loc : nested list
+        A nested list of the coordinates of the best points, with each coordinate as a list in the form [x, y]
+
+    """
+    angle = calculate_bearing_angle(lat1, lng1, lat2, lng2)
+    
     sample_filter = np.array([[0, -2, -2, -2, 0],
                               [1, .5, -2, .5, 1],
                               [1, .5, -2, .5, 1],
                               [1,  1, .5,  1, 1],
                               [0,  1,  1,  1, 0]])
     
-    corr = signal.correlate2d(elevation_grid, sample_filter, boundary='symm', mode='valid')          
-    best_loc = np.unravel_index(np.argmax(corr), corr.shape)
-
+    rotated_filter = rotate_filter(sample_filter, angle)
+    
+    corr = signal.correlate2d(elevation_grid, rotated_filter, boundary='symm', mode='valid')          
+    best_loc = find_best_locations(corr, n)
     return corr, best_loc
 
 
@@ -84,6 +112,30 @@ def calculate_bearing_angle(lat1, lng1, lat2, lng2):
     return brng
 
 
+def find_best_locations(corr, n = 5): 
+    """ Find the best locations based on the correlated 2D array (coor)
+
+    Parameter
+    _______
+    corr: 2D array
+        Array of values representing the viability of the position to prevent radio signal jamming
+    n: int
+        Number of "best" locations to return
+    
+    Returns
+    _______
+    best_loc: nested list
+        A nested list of the coordinates of the best points, with each coordinate as a list in the form [x, y]
+    """
+    # Takes in how many ideal locations to return (returns up to the n-th best location)
+    max_n_indices = corr.ravel().argsort()[-n:]
+    best_loc = []
+    for i in max_n_indices: 
+        best_loc.append(list(np.unravel_index(i, corr.shape)))
+
+    return best_loc
+
+    
 if __name__ == "__main__":
     
     # Test to make sure calculate_bearing_angle works
@@ -92,15 +144,16 @@ if __name__ == "__main__":
     
     # Test to make sure compute_heatmap works
     stats, carpet = get_airmap_data(47.6062, 122.3321)
-    print(carpet)
-    heatmap, best_loc = compute_heatmap(carpet)
+    # print(carpet)
+    heatmap, best_loc = compute_heatmap(carpet, 39.099912, -94.581213, 38.627089, -90.200203)
     plt.figure(1)
     plt.title("Elevation Grid")
     plt.imshow(carpet)
 
     plt.figure(2)
     plt.title("Heatmap")
-    plt.plot(best_loc[1], best_loc[0], 'ro')
+    for i in range(len(best_loc)): 
+        plt.plot(best_loc[i][1], best_loc[i][0], 'ro')
     plt.imshow(heatmap)
 
     # Test to make sure rotate_filter works
@@ -118,6 +171,5 @@ if __name__ == "__main__":
     plt.imshow(rotate_filter(sample_filter, 45))
     plt.title("Rotated Filter")
     plt.show()
-
 
     
