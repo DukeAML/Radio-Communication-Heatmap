@@ -125,7 +125,7 @@ def find_best_locations(corr, n = 5):
     Returns
     _______
     best_loc: nested list
-        A nested list of the coordinates of the best points, with each coordinate as a list in the form [x, y]
+        A nested list of the coordinates of the best points, with each coordinate as a list in the form [y, x]
     """
 
     max_n_indices = corr.ravel().argsort()[-n:]
