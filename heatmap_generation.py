@@ -34,6 +34,7 @@ def compute_heatmap(elevation_grid, lat1, lng1, lat2, lng2, n = 5):
         A nested list of the coordinates of the best points, with each coordinate as a list in the form [y, x]
 
     """
+    
     angle = calculate_bearing_angle(lat1, lng1, lat2, lng2)
     
     sample_filter = np.array([[0, -2, -2, -2, 0],
@@ -115,17 +116,18 @@ def calculate_bearing_angle(lat1, lng1, lat2, lng2):
 def find_best_locations(corr, n = 5): 
     """ Find the best locations based on the correlated 2D array (coor)
 
-    Parameter
-    _______
+    Parameters
+    ----------
     corr: 2D array
         Array of values representing the viability of the position to prevent radio signal jamming
     n: int
         Number of "best" locations to return
     
     Returns
-    _______
+    -------
     best_loc: nested list
         A nested list of the coordinates of the best points, with each coordinate as a list in the form [y, x]
+        
     """
 
     max_n_indices = corr.ravel().argsort()[-n:]
