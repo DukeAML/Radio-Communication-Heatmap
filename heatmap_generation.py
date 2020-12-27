@@ -122,6 +122,8 @@ def find_best_locations(corr, n = 5, radius = 2):
         Array of values representing the viability of the position to prevent radio signal jamming
     n: int
         Number of "best" locations to return
+    radius: int
+        Radius of overlapping region from which to remove potential locations
     
     Returns
     -------
