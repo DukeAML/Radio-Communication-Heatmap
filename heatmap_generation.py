@@ -56,7 +56,18 @@ def rotate_filter(filter, degrees):
     Parameters
     ----------
     filter : 2D numpy array
-        Can be any shape, but must be a 2D numpy array.
+        Can be any shape, but must be a 2D numpy array, and must contain a float.
+
+        Will NOT work:
+        filter = np.array([[1, 0, 0],
+                           [0, 1, 0],
+                           [0, 0, 1]])
+
+        Will work:
+        filter = np.array([[1, 0, 0.0],
+                           [0, 1, 0],
+                           [0, 0, 1]])
+
     degrees : float/double/int
         How many degrees to rotate the array.
 
