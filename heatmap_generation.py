@@ -113,8 +113,8 @@ def calculate_bearing_angle(lat1, lng1, lat2, lng2):
     return brng
 
 
-def find_best_locations(corr, n = 5): 
-    """ Find the best locations based on the correlated 2D array (coor)
+def find_best_locations(corr, n = 5, radius = 2):
+    """ Find up to the n-th best locations based on the correlated 2D array (corr)
 
     Parameters
     ----------
@@ -130,16 +130,28 @@ def find_best_locations(corr, n = 5):
         
     """
 
-    max_n_indices = corr.ravel().argsort()[-n:]
-    best_loc = []
-    for i in max_n_indices: 
-        best_loc.append(list(np.unravel_index(i, corr.shape)))
+    max_indices = corr.ravel().argsort()[::-1] # sorted in order from maximum to minimum
+    best_loc = [list(np.unravel_index(max_indices[0], corr.shape))]
+    occupied_ycoor = [*range(best_loc[0][0]-radius, best_loc[0][0]+(radius+1))]
+    occupied_xcoor = [*range(best_loc[0][1]-radius, best_loc[0][1]+(radius+1))]
+
+    for i in max_indices[1:]:
+        coordinate = list(np.unravel_index(i, corr.shape))
+        if len(best_loc) == n:
+            break
+        if (coordinate[0] in occupied_ycoor) and (coordinate[1] in occupied_xcoor):
+            pass
+        else:
+            if len(best_loc) < n:
+                best_loc.append(coordinate)
+                occupied_ycoor += [*range(coordinate[0]-radius, coordinate[0]+(radius+1))]
+                occupied_xcoor += [*range(coordinate[1]-radius, coordinate[1]+(radius+1))]
 
     return best_loc
 
     
 if __name__ == "__main__":
-    
+
     # Test to make sure calculate_bearing_angle works
     print(calculate_bearing_angle(39.099912, -94.581213, 38.627089, -90.200203)) # Should return 96.51
     print(calculate_bearing_angle(8.46696, -17.03663, 65.35996, -17.03663)) # Should return 0 degrees
@@ -148,13 +160,15 @@ if __name__ == "__main__":
     stats, carpet = get_airmap_data(47.6062, 122.3321)
     # print(carpet)
     heatmap, best_loc = compute_heatmap(carpet, 39.099912, -94.581213, 38.627089, -90.200203)
+    print(best_loc)
+
     plt.figure(1)
     plt.title("Elevation Grid")
     plt.imshow(carpet)
 
     plt.figure(2)
     plt.title("Heatmap")
-    for i in range(len(best_loc)): 
+    for i in range(len(best_loc)):
         plt.plot(best_loc[i][1], best_loc[i][0], 'ro')
     plt.imshow(heatmap)
 
@@ -173,5 +187,3 @@ if __name__ == "__main__":
     plt.imshow(rotate_filter(sample_filter, 45))
     plt.title("Rotated Filter")
     plt.show()
-
-    
